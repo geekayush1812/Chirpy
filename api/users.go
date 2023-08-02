@@ -10,24 +10,24 @@ import (
 )
 
 type userRequest struct {
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 type updateUserRequest struct {
-	Email string `json:"email,omitempty"`
-	Password string `json:"password,omitempty"`
-	IsChirpyRed bool `json:"is_chirpy_red,omitempty"`
+	Email       string `json:"email,omitempty"`
+	Password    string `json:"password,omitempty"`
+	IsChirpyRed bool   `json:"is_chirpy_red,omitempty"`
 }
 
 const (
-	SOMETHING_WENT_WRONG = "Something went wrong"
-	REQUIRED_FIELD_ERROR = "both email and password are required fields"
+	SOMETHING_WENT_WRONG        = "Something went wrong"
+	REQUIRED_FIELD_ERROR        = "both email and password are required fields"
 	ONE_OF_REQUIRED_FIELD_ERROR = "one of email and password are required"
-	USER_NOT_AUTHORIZED = "not authorized"
+	USER_NOT_AUTHORIZED         = "not authorized"
 )
 
-func handleUserRequestInputSanitization(w http.ResponseWriter, r *http.Request) (userRequest, error){
+func handleUserRequestInputSanitization(w http.ResponseWriter, r *http.Request) (userRequest, error) {
 	decoder := json.NewDecoder(r.Body)
 	requestBody := userRequest{}
 	err := decoder.Decode(&requestBody)
@@ -48,7 +48,7 @@ func handleUserRequestInputSanitization(w http.ResponseWriter, r *http.Request) 
 func createUser(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
-	
+
 	requestBody, err := handleUserRequestInputSanitization(w, r)
 
 	if err != nil {
@@ -72,12 +72,12 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	
-	statusCode, errMessage, userJwtClaims := isUserAuthorized(w,r)
+
+	statusCode, errMessage, userJwtClaims := isUserAuthorized(w, r)
 
 	if statusCode != http.StatusOK {
 		handleApiError(w, statusCode, errMessage)
-		return;
+		return
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -92,7 +92,7 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 
 	if requestBody.Email == "" && requestBody.Password == "" {
 		handleApiError(w, http.StatusUnprocessableEntity, ONE_OF_REQUIRED_FIELD_ERROR)
-		return 
+		return
 	}
 
 	userId, err := strconv.ParseInt(userJwtClaims.Subject, 10, 32)

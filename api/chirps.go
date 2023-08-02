@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	EMPTY_CHIRP_BODY_ERROR = "Chirp is empty"
+	EMPTY_CHIRP_BODY_ERROR    = "Chirp is empty"
 	TOO_LONG_CHIRP_BODY_ERROR = "Chirp is too long"
-	CHIRP_ID_REQUIRED = "Chirp id required"
-	USER_FORBIDDEN = "user not allowed"
+	CHIRP_ID_REQUIRED         = "Chirp id required"
+	USER_FORBIDDEN            = "user not allowed"
 )
 
 type chirpRequest struct {
@@ -56,11 +56,11 @@ func isChirpEmpty(body string) bool {
 func createChirp(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	statusCode, errMessage, userJwtClaims := isUserAuthorized(w,r)
+	statusCode, errMessage, userJwtClaims := isUserAuthorized(w, r)
 
 	if statusCode != http.StatusOK {
 		handleApiError(w, statusCode, errMessage)
-		return;
+		return
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -137,7 +137,7 @@ func getChirpsById(w http.ResponseWriter, r *http.Request) {
 }
 
 func getChirps(w http.ResponseWriter, r *http.Request) {
-	author_id := r.URL.Query().Get("author_id");
+	author_id := r.URL.Query().Get("author_id")
 	sortType := r.URL.Query().Get("sort")
 
 	chirps, err := db.GetChirps(author_id, sortType)
@@ -154,15 +154,14 @@ func getChirps(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 func deleteChirpById(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	statusCode, errMessage, userJwtClaims := isUserAuthorized(w,r)
+	statusCode, errMessage, userJwtClaims := isUserAuthorized(w, r)
 
 	if statusCode != http.StatusOK {
 		handleApiError(w, statusCode, errMessage)
-		return;
+		return
 	}
 
 	urlParams := chi.URLParam(r, "chirpId")

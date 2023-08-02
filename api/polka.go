@@ -9,10 +9,9 @@ import (
 	"github.com/geekayush1812/chirpy/jsonResponse"
 )
 
-
 type PolkaWebhooksRequest struct {
 	Event string `json:"event"`
-	Data struct{
+	Data  struct {
 		UserId int `json:"user_id"`
 	} `json:"data"`
 }

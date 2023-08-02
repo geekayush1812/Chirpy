@@ -7,11 +7,10 @@ import (
 )
 
 type Chirp struct {
-	Id   int    `json:"id"`
-	Body string `json:"body"`
-	AuthorId int `json:"author_id"`
+	Id       int    `json:"id"`
+	Body     string `json:"body"`
+	AuthorId int    `json:"author_id"`
 }
-
 
 func sortChirps(chirps []Chirp, sortType string) {
 	sort.Slice(chirps, func(i, j int) bool {
@@ -35,8 +34,8 @@ func (db *DB) CreateChirp(authorId int, body string) (Chirp, error) {
 	}
 
 	newChirp := Chirp{
-		Id:   len(dbData.Chirps) + 1,
-		Body: body,
+		Id:       len(dbData.Chirps) + 1,
+		Body:     body,
 		AuthorId: authorId,
 	}
 
@@ -76,7 +75,7 @@ func (db *DB) GetChirps(authorId string, sortType string) ([]Chirp, error) {
 		}
 	}
 
-	if (sortType == "") {
+	if sortType == "" {
 		sortType = "asc"
 	}
 
@@ -103,7 +102,6 @@ func (db *DB) GetChirp(id int) (Chirp, error) {
 
 	return chirp, nil
 }
-
 
 func (db *DB) DeleteChirp(id int) error {
 	db.mux.Lock()

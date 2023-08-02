@@ -9,11 +9,11 @@ import (
 )
 
 type User struct {
-	Id    int    `json:"id"`
-	Email string `json:"email"`
-	Password string `json:"password"`
+	Id                   int               `json:"id"`
+	Email                string            `json:"email"`
+	Password             string            `json:"password"`
 	RevokedRefreshTokens map[string]string `json:"revokedRefreshTokens"`
-	IsChirpyRed bool `json:"is_chirpy_red"`
+	IsChirpyRed          bool              `json:"is_chirpy_red"`
 }
 
 func (db *DB) IsUserExists(userId int) (error, bool) {
@@ -26,7 +26,7 @@ func (db *DB) IsUserExists(userId int) (error, bool) {
 		return err, false
 	}
 
-	_ , ok := dbData.Users[userId];
+	_, ok := dbData.Users[userId]
 
 	return nil, ok
 }
@@ -49,16 +49,16 @@ func (db *DB) CreateUser(email, password string) (User, error) {
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 5)
 
-	if err!= nil {
+	if err != nil {
 		return User{}, err
 	}
 
 	newUser := User{
-		Id:    len(dbData.Users) + 1,
-		Email: email,
-		Password: string(hashedPassword),
+		Id:                   len(dbData.Users) + 1,
+		Email:                email,
+		Password:             string(hashedPassword),
 		RevokedRefreshTokens: map[string]string{},
-		IsChirpyRed: false,
+		IsChirpyRed:          false,
 	}
 
 	dbData.Users[newUser.Id] = newUser
@@ -154,7 +154,7 @@ func (db *DB) IsUserRefreshTokenRevoked(userId int, userToken string) error {
 	for _, user := range dbData.Users {
 		if user.Id == userId {
 			newUser = user
-			break;
+			break
 		}
 	}
 
@@ -184,8 +184,8 @@ func (db *DB) RevokeUserRefreshToken(userId int, userToken string) error {
 	for _, user := range dbData.Users {
 		if user.Id == userId {
 			user.RevokedRefreshTokens[userToken] = time.Now().String()
-			dbData.Users[userId] = user;
-		
+			dbData.Users[userId] = user
+
 			err = db.writeDB(dbData)
 
 			if err != nil {

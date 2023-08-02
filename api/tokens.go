@@ -11,13 +11,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-
 type UserToken struct {
 	Token string `json:"token"`
 }
 
-
-func refreshToken(w http.ResponseWriter, r * http.Request) {
+func refreshToken(w http.ResponseWriter, r *http.Request) {
 	authorizationHeader := r.Header.Get("Authorization")
 
 	if authorizationHeader == "" {
@@ -32,14 +30,14 @@ func refreshToken(w http.ResponseWriter, r * http.Request) {
 	userJwtClaims := &jwt.RegisteredClaims{}
 
 	claims, err := jwt.ParseWithClaims(userBearerToken, userJwtClaims, func(token *jwt.Token) (interface{}, error) {
-        return []byte(jwtSecret), nil
-    })
+		return []byte(jwtSecret), nil
+	})
 
 	if err != nil || !claims.Valid {
 		handleApiError(w, http.StatusUnauthorized, USER_NOT_AUTHORIZED)
 		return
 	}
-	
+
 	userJwtIssuer := userJwtClaims.Issuer
 
 	if userJwtIssuer != "chirpy-refresh" {
@@ -62,9 +60,9 @@ func refreshToken(w http.ResponseWriter, r * http.Request) {
 	}
 
 	unsignedJwtAccessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Issuer: "chirpy-access",
-		IssuedAt: jwt.NewNumericDate(time.Now().UTC()),
-		Subject: strconv.FormatInt(userId, 10),
+		Issuer:    "chirpy-access",
+		IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
+		Subject:   strconv.FormatInt(userId, 10),
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 	})
 
@@ -82,8 +80,7 @@ func refreshToken(w http.ResponseWriter, r * http.Request) {
 	})
 }
 
-
-func revokeToken(w http.ResponseWriter, r * http.Request) {
+func revokeToken(w http.ResponseWriter, r *http.Request) {
 	authorizationHeader := r.Header.Get("Authorization")
 
 	if authorizationHeader == "" {
@@ -98,14 +95,14 @@ func revokeToken(w http.ResponseWriter, r * http.Request) {
 	userJwtClaims := &jwt.RegisteredClaims{}
 
 	claims, err := jwt.ParseWithClaims(userBearerToken, userJwtClaims, func(token *jwt.Token) (interface{}, error) {
-        return []byte(jwtSecret), nil
-    })
+		return []byte(jwtSecret), nil
+	})
 
 	if err != nil || !claims.Valid {
 		handleApiError(w, http.StatusUnauthorized, USER_NOT_AUTHORIZED)
 		return
 	}
-	
+
 	userJwtIssuer := userJwtClaims.Issuer
 
 	if userJwtIssuer != "chirpy-refresh" {

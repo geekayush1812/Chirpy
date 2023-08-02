@@ -12,18 +12,17 @@ import (
 )
 
 type UserResponse struct {
-	Id    int    `json:"id"`
-	Email string `json:"email"`
-	Token string `json:"token"`
+	Id           int    `json:"id"`
+	Email        string `json:"email"`
+	Token        string `json:"token"`
 	RefreshToken string `json:"refresh_token"`
-	IsChirpyRed bool `json:"is_chirpy_red"`
+	IsChirpyRed  bool   `json:"is_chirpy_red"`
 }
-
 
 func login(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
-	
+
 	requestBody, err := handleUserRequestInputSanitization(w, r)
 
 	if err != nil {
@@ -49,16 +48,16 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	unsignedJwtAccessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Issuer: "chirpy-access",
-		IssuedAt: jwt.NewNumericDate(time.Now().UTC()),
-		Subject: strconv.FormatInt(int64(user.Id), 10),
+		Issuer:    "chirpy-access",
+		IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
+		Subject:   strconv.FormatInt(int64(user.Id), 10),
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 	})
 
 	unsignedJwtRefreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Issuer: "chirpy-refresh",
-		IssuedAt: jwt.NewNumericDate(time.Now().UTC()),
-		Subject: strconv.FormatInt(int64(user.Id), 10),
+		Issuer:    "chirpy-refresh",
+		IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
+		Subject:   strconv.FormatInt(int64(user.Id), 10),
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(60 * 24 * time.Hour)),
 	})
 
@@ -75,10 +74,10 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonResponse.ResponseWithJson(w, http.StatusOK, UserResponse{
-		Id: user.Id,
-		Email: user.Email,
-		Token: signedJwtAccessToken,
+		Id:           user.Id,
+		Email:        user.Email,
+		Token:        signedJwtAccessToken,
 		RefreshToken: signedJwtRefreshToken,
-		IsChirpyRed: user.IsChirpyRed,
+		IsChirpyRed:  user.IsChirpyRed,
 	})
 }
